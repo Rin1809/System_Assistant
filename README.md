@@ -4,7 +4,6 @@
 ![Image](https://github.com/user-attachments/assets/bce1e88b-4710-41a4-87c0-88eced9e1635)
 
 
-# Assistant - Trợ lý Ảo Cá Nhân (Rin) Dựa trên Gemini
 
 <details>
 <summary>🇻🇳 Tiếng Việt</summary>
