@@ -112,10 +112,10 @@ Trước khi cài đặt và chạy **Assistant (Rin)**, bạn cần đảm bả
 
 ### Các bước cài đặt
 
-1. **Tải Dự án:** Clone hoặc tải mã nguồn dự án **Assistant** từ GitHub (hoặc nguồn khác).
+1. **Tải Dự án:** Clone hoặc tải mã nguồn dự án **Assistant** từ GitHubGitHub.
 
    ```bash
-   git clone [URL_repository_GitHub_của_bạn]
+   git clone https://github.com/Rin1809/System_Assistant
    cd Assistant
    ```
 
@@ -522,10 +522,10 @@ Before installing and running **Assistant (Rin)**, ensure you have the following
 
 ### Installation Steps
 
-1. **Download Project:** Clone or download the **Assistant** project source code from GitHub (or other source).
+1. **Download Project:** Clone or download the **Assistant** project source code from GitHub.
 
    ```bash
-   git clone [Your_GitHub_Repository_URL]
+   git clone https://github.com/Rin1809/System_Assistant
    cd Assistant
    ```
 
@@ -932,10 +932,10 @@ Assistant/
 
 ### インストール手順
 
-1. **プロジェクトのダウンロード:** GitHub（またはその他のソース）から **Assistant** プロジェクトのソースコードをクローンまたはダウンロードします。
+1. **プロジェクトのダウンロード:** GitHub から **Assistant** プロジェクトのソースコードをクローンまたはダウンロードします。
 
    ```bash
-   git clone [Your_GitHub_Repository_URL]
+   git clone https://github.com/Rin1809/System_Assistant
    cd Assistant
    ```
 
