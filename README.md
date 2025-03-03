@@ -3,7 +3,7 @@
 # I want open the control panel but forgot how to open it or how to do that, what should i do?
 ![Image](https://github.com/user-attachments/assets/bce1e88b-4710-41a4-87c0-88eced9e1635)
 
-```markdown
+
 # Assistant - Trợ lý Ảo Cá Nhân (Rin) Dựa trên Gemini
 
 <details>
