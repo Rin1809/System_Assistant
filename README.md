@@ -1,10 +1,10 @@
 # Assistant - Rin (Testing, In Progress...) ᓚᘏᗢ
 
-# I want open the control panel but forgot how to open it or how to do that, what should i do?
+## I want open the control panel but forgot how to open it or how to do that, what should i do?
 ![Image](https://github.com/user-attachments/assets/bce1e88b-4710-41a4-87c0-88eced9e1635)
 
 
-
+## Introduction
 <details>
 <summary>🇻🇳 Tiếng Việt</summary>
 
