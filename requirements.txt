@@ -1,10 +1,9 @@
-google-generativeai==0.3.2
-psutil==5.9.8
-watchdog==4.0.0
-python-magic-bin==0.4.14  # Dành cho Windows, cần python-magic trên Linux/macOS
-python-docx==1.1.0
-openpyxl==3.1.2
-Pygments==2.17.2
-rich==13.7.0
+google-generativeai
+psutil
+watchdog
+python-magic
+pygments
+python-docx
+openpyxl
+rich
 wmi
-pyception

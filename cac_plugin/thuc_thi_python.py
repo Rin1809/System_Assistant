@@ -12,6 +12,7 @@ import traceback
 import time
 from core.chat import hoi_gemini
 import threading
+from core import chat  
 
 class ThucThiPython:
     def __init__(self):
@@ -34,14 +35,34 @@ class ThucThiPython:
                 return self._tra_ve_loi("Không tìm thấy mã Python", "Không tìm thấy mã Python trong phản hồi của Gemini.")
 
             ma_python = self._sua_loi_unicode(ma_python)
+            
+            start_time = time.time()
             ket_qua_thuc_thi = self._thuc_thi_lenh(ma_python)
+            end_time = time.time()
+            execution_time = end_time - start_time
 
             if re.search(r"(disk info|thông tin ổ đĩa|ổ đĩa)", cau_hoi, re.IGNORECASE):
                 ket_qua_thuc_thi["disk_info"] = self._lay_thong_tin_o_dia()
 
             ket_qua_thuc_thi["gemini_2_validation"] = self._danh_gia_ket_qua(cau_hoi, ma_python, ket_qua_thuc_thi, memory)
-            return ket_qua_thuc_thi
 
+            # Sử dụng format_output để in kết quả
+            formatted_result = cau_hinh.format_output(
+                plugin_name="Thực thi Python",
+                message=ket_qua_thuc_thi.get("message"), # Dùng .get() để tránh lỗi KeyError
+                analysis=ket_qua_thuc_thi.get("gemini_2_validation"), # Dùng .get() để tránh lỗi KeyError
+                output=ket_qua_thuc_thi.get("stdout"), # Dùng .get() để tránh lỗi KeyError
+                error=ket_qua_thuc_thi.get("stderr"), # Dùng .get() để tránh lỗi KeyError
+                disk_info=ket_qua_thuc_thi.get("disk_info", {}).get("disk_info"),
+                code=ma_python,
+                execution_time=execution_time,
+                detailed=True
+            )
+            print(f"[{chat.lay_thoi_gian_hien_tai()}] {cau_hinh.RIN}Rin{cau_hinh.RESET}:")
+            print(formatted_result)  # Chỉ in ra sau khi đã gọi format_output
+
+            return ket_qua_thuc_thi
+        
         except Exception as e:
             log_error(f"Lỗi khi thực thi mã Python: {e}", detail=traceback.format_exc())
             return self._tra_ve_loi("Lỗi không xác định", f"Lỗi: {e}")
@@ -184,7 +205,6 @@ The execution result is not as expected. ----> **THE CONTROL PANEL HAS OPENED BU
 
     def _thuc_thi_lenh(self, ma_python):
         log_info("Bắt đầu thực thi mã Python.")
-        start_time = time.time()
         temp_file_path = os.path.join(os.environ.get("TEMP", "C:\\Windows\\Temp"), "temp_code.py")
 
         try:
@@ -230,8 +250,6 @@ The execution result is not as expected. ----> **THE CONTROL PANEL HAS OPENED BU
 
             os.remove(temp_file_path)
 
-            end_time = time.time()
-            execution_time = end_time - start_time
             log_message = f"Kết quả thực thi:\nOutput:\n{stdout.strip()}\nError:\n{stderr.strip()}\nReturn code: {returncode}"
             return {
                 "stdout": stdout.strip(),
@@ -240,7 +258,6 @@ The execution result is not as expected. ----> **THE CONTROL PANEL HAS OPENED BU
                 "success": returncode == 0,
                 "message": f"{cau_hinh.GREEN}Đã thực thi mã Python.{cau_hinh.RESET}" if returncode == 0 else f"{cau_hinh.RED}Lỗi khi thực thi mã Python.{cau_hinh.RESET}",
                 "log": log_message, 
-                "execution_time": execution_time,
             }
 
         except (FileNotFoundError, PermissionError) as e:

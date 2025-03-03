@@ -8,6 +8,7 @@ import json
 import re
 import asyncio
 import sys
+from core import chat  
 
 class ThucThiLenhHeThong:
     def __init__(self):
@@ -50,7 +51,6 @@ class ThucThiLenhHeThong:
         """
         log_info(f"Thực thi lệnh hệ thống: {cau_hoi}")
 
-       
         system = platform.system()
         version = sys.getwindowsversion()
         version_str = f"{version.build}.{version.major}.{version.minor}-{version.service_pack}"
@@ -66,13 +66,31 @@ class ThucThiLenhHeThong:
         if not command:
             return self._tra_ve_loi("Lệnh rỗng", "Không thể tạo ra lệnh từ yêu cầu.")
 
+        start_time = time.time()  # Bắt đầu tính thời gian
         ket_qua = self._chay_lenh(command)
+        end_time = time.time()  # Kết thúc tính thời gian
+        execution_time = end_time - start_time  # Tính thời gian thực thi
 
         # comment cua model 2
         ket_qua["gemini_2_validation"] = self._danh_gia_ket_qua(cau_hoi, command, ket_qua, memory)
         self._luu_memory(cau_hoi, command, ket_qua, memory)
+        ket_qua_tra_ve = self._tao_ket_qua_tra_ve(ket_qua)
 
-        return self._tao_ket_qua_tra_ve(ket_qua)
+        # Sử dụng format_output để in kết quả
+        formatted_result = cau_hinh.format_output(
+            plugin_name="Thực thi lệnh hệ thống",
+            message=ket_qua_tra_ve.get("message"),
+            analysis=ket_qua_tra_ve.get("gemini_2_validation"),
+            output=ket_qua_tra_ve.get("stdout"),
+            error=ket_qua_tra_ve.get("stderr"),
+            execution_time=execution_time,  # Truyền execution_time vào đây
+            detailed=True
+        )
+        print(f"[{chat.lay_thoi_gian_hien_tai()}] {cau_hinh.RIN}Rin{cau_hinh.RESET}:")
+        print(formatted_result)
+
+        return ket_qua_tra_ve
+
 
     def _tao_prompt(self, cau_hoi, memory, system, version_str):
         prompt = f"""
@@ -177,14 +195,10 @@ class ThucThiLenhHeThong:
                 message = f"{cau_hinh.ERROR}Lỗi: {ket_qua['stderr']}"
             else:
                 message = f"{cau_hinh.ERROR}Lỗi: Lệnh thực thi không thành công với mã lỗi {ket_qua['returncode']}"
-
-        return {
-            "success": ket_qua["returncode"] == 0,
-            "message": message,
-            "output": ket_qua["stdout"],
-            "error": ket_qua["stderr"],
-            "gemini_2_validation": ket_qua["gemini_2_validation"],
-        }
+        
+        ket_qua["message"] = message
+        ket_qua["gemini_2_validation"] = ket_qua.get("gemini_2_validation", "Không có đánh giá.")
+        return ket_qua
 
     def _tra_ve_loi(self, loai_loi, thong_bao_loi):
         return {
@@ -192,5 +206,5 @@ class ThucThiLenhHeThong:
             "message": f"{cau_hinh.ERROR}{thong_bao_loi}{cau_hinh.RESET}",
             "output": "",
             "error": loai_loi,
-            "gemini_2_validation": loai_loi,
+            "gemini_2_validation": "Không có đánh giá.",
         }

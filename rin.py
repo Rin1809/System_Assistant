@@ -432,6 +432,7 @@ async def main():
                         execution_time = end_time - start_time
 
                         if ket_qua_xu_ly["type"] == "xu_ly_file":
+                            # Sử dụng hàm format_output để in kết quả
                             formatted_result = format_output(
                                 message=ket_qua_xu_ly["message"],
                                 content=ket_qua_xu_ly["content"],
@@ -452,7 +453,7 @@ async def main():
                                     }
                                 )
                         elif ket_qua_xu_ly["type"] == "thay_doi":
-
+                            # Sử dụng hàm format_output để in kết quả
                             danh_gia = ""
                             noi_dung = None
 
@@ -560,6 +561,18 @@ async def main():
                     execution_time = end_time - start_time
 
                     if ket_qua_thuc_thi:
+                        # In kết quả thông qua hàm format_output từ cau_hinh.py
+                        formatted_result = cau_hinh.format_output(
+                            plugin_name="Thực thi lệnh hệ thống",
+                            message=ket_qua_thuc_thi["message"],
+                            analysis=ket_qua_thuc_thi["gemini_2_validation"],
+                            output=ket_qua_thuc_thi["output"],
+                            error=ket_qua_thuc_thi["error"],
+                            execution_time=execution_time,
+                            detailed=True
+                        )
+                        print(f"[{chat.lay_thoi_gian_hien_tai()}] {cau_hinh.RIN}Rin{cau_hinh.RESET}:")
+                        print(formatted_result)
                         session_memory.append(
                             {
                                 "role": "system",
@@ -568,17 +581,13 @@ async def main():
                         )
                         if ket_qua_thuc_thi["success"]:
                             if "message" in ket_qua_thuc_thi:
-                                print(
-                                    f"[{chat.lay_thoi_gian_hien_tai()}] {cau_hinh.RIN}Rin{cau_hinh.RESET}: {ket_qua_thuc_thi['message']}"
-                                )
+                                
                                 session_memory.append(
                                     {"role": "model", "content": ket_qua_thuc_thi["message"]}
                                 )
 
                             if "gemini_2_validation" in ket_qua_thuc_thi:
-                                print(
-                                    f"[{chat.lay_thoi_gian_hien_tai()}] {cau_hinh.RIN}Rin{cau_hinh.RESET}: {cau_hinh.GREEN}Phân tích: [OK]{cau_hinh.RESET}\n\n[==================================================================================================]\n{cau_hinh.RICH_PINK}[!!]{cau_hinh.RESET} {cau_hinh.THISTLE1}{ket_qua_thuc_thi['gemini_2_validation']}{cau_hinh.RESET}\n[==================================================================================================]\n"
-                                )
+                                
                                 session_memory.append(
                                     {
                                         "role": "model",
@@ -587,9 +596,7 @@ async def main():
                                 )
 
                             if "output" in ket_qua_thuc_thi and ket_qua_thuc_thi["output"]:
-                                print(
-                                    f"[{chat.lay_thoi_gian_hien_tai()}] {cau_hinh.RIN}Rin{cau_hinh.RESET}: {cau_hinh.PINK1}Output:\n\n{ket_qua_thuc_thi['output']}{cau_hinh.RESET}"
-                                )
+                                
                                 session_memory.append(
                                     {
                                         "role": "system",
@@ -598,17 +605,13 @@ async def main():
                                 )
                         else:
                             if "message" in ket_qua_thuc_thi:
-                                print(
-                                    f"[{chat.lay_thoi_gian_hien_tai()}] {cau_hinh.RIN}Rin{cau_hinh.RESET}: {ket_qua_thuc_thi['message']}"
-                                )
+                                
                                 session_memory.append(
                                     {"role": "model", "content": ket_qua_thuc_thi["message"]}
                                 )
 
                             if "gemini_2_validation" in ket_qua_thuc_thi:
-                                print(
-                                    f"[{chat.lay_thoi_gian_hien_tai()}] {cau_hinh.RIN}Rin{cau_hinh.RESET}: {cau_hinh.GREEN}Phân tích: [OK]{cau_hinh.RESET}\n\n[==================================================================================================]\n{cau_hinh.RICH_PINK}[!!]{cau_hinh.RESET} {cau_hinh.THISTLE1}{ket_qua_thuc_thi['gemini_2_validation']}{cau_hinh.RESET}\n[==================================================================================================]\n"
-                                )
+                                
                                 session_memory.append(
                                     {
                                         "role": "model",
@@ -616,9 +619,7 @@ async def main():
                                     }
                                 )
                             if "output" in ket_qua_thuc_thi and ket_qua_thuc_thi["output"]:
-                                print(
-                                    f"[{chat.lay_thoi_gian_hien_tai()}] {cau_hinh.RIN}Rin{cau_hinh.RESET}: {cau_hinh.PINK1}Output:\n\n{ket_qua_thuc_thi['output']}{cau_hinh.RESET}"
-                                )
+                                
                                 session_memory.append(
                                     {
                                         "role": "system",
@@ -644,7 +645,7 @@ async def main():
                         }
                     )
                 finally:
-
+                    #await stop_thinking_animation_wrapper()  # Sử dụng hàm wrapper
                     pass
                 session_memory.append({"role": "system", "content": "--- Kết thúc xử lý câu lệnh ---"})
                 await stop_thinking_animation_wrapper()
@@ -666,26 +667,38 @@ async def main():
                     ket_qua_thuc_thi = thuc_thi_plugin.thuc_thi(cau_hoi_moi, memory)
                     end_time = time.time()
                     execution_time = end_time - start_time
-                    session_memory.append(
-                        {
-                            "role": "system",
-                            "content": f"[PLUGIN: ThucThiPython] Thời gian thực thi: {execution_time:.4f} giây",
-                        }
-                    )
+                    
+                    
+                    if ket_qua_thuc_thi:
+                        # In kết quả thông qua hàm format_output từ cau_hinh.py
+                        formatted_result = cau_hinh.format_output(
+                            plugin_name="Thực thi Python",
+                            message=ket_qua_thuc_thi["message"],
+                            analysis=ket_qua_thuc_thi["gemini_2_validation"],
+                            output=ket_qua_thuc_thi["stdout"],
+                            error=ket_qua_thuc_thi["stderr"],
+                            disk_info=ket_qua_thuc_thi.get("disk_info", {}).get("disk_info"),
+                            code=None,
+                            execution_time=execution_time,
+                            detailed=True
+                        )
+                        print(f"[{chat.lay_thoi_gian_hien_tai()}] {cau_hinh.RIN}Rin{cau_hinh.RESET}:")
+                        print(formatted_result)
+                        
+                        session_memory.append(
+                            {
+                                "role": "system",
+                                "content": f"[PLUGIN:                        ThucThiPython] Thời gian thực thi: {execution_time:.4f} giây",
+                            }
+                        )
 
                     if ket_qua_thuc_thi:
                         if "success" in ket_qua_thuc_thi and ket_qua_thuc_thi["success"]:
                             if "message" in ket_qua_thuc_thi:
-                                print(
-                                    f"[{chat.lay_thoi_gian_hien_tai()}] {cau_hinh.RIN}Rin{cau_hinh.RESET}: {ket_qua_thuc_thi['message']}"
-                                )
                                 session_memory.append(
                                     {"role": "model", "content": ket_qua_thuc_thi["message"]}
                                 )
                             if "gemini_2_validation" in ket_qua_thuc_thi:
-                                print(
-                                    f"[{chat.lay_thoi_gian_hien_tai()}] {cau_hinh.RIN}Rin{cau_hinh.RESET}: {cau_hinh.GREEN}Phân tích: [OK]{cau_hinh.RESET}\n\n[==================================================================================================]\n{cau_hinh.RICH_PINK}[!!]{cau_hinh.RESET} {cau_hinh.THISTLE1}{ket_qua_thuc_thi['gemini_2_validation']}{cau_hinh.RESET}\n[==================================================================================================]\n"
-                                )
                                 session_memory.append(
                                     {
                                         "role": "model",
@@ -693,9 +706,6 @@ async def main():
                                     }
                                 )
                             if "stdout" in ket_qua_thuc_thi and ket_qua_thuc_thi["stdout"]:
-                                print(
-                                    f"[{chat.lay_thoi_gian_hien_tai()}] {cau_hinh.RIN}Rin{cau_hinh.RESET}: {cau_hinh.PINK1}Output:\n{ket_qua_thuc_thi['stdout']}{cau_hinh.RESET}"
-                                )
                                 session_memory.append(
                                     {
                                         "role": "system",
@@ -703,9 +713,6 @@ async def main():
                                     }
                                 )
                             elif "stderr" in ket_qua_thuc_thi and ket_qua_thuc_thi["stderr"]:
-                                print(
-                                    f"[{chat.lay_thoi_gian_hien_tai()}] {cau_hinh.RIN}Rin{cau_hinh.RESET}: {cau_hinh.RED}Error: {cau_hinh.RESET}\n[==================================================================================================]\n{cau_hinh.TIME}{ket_qua_thuc_thi['stderr']}{cau_hinh.RESET}\n[==================================================================================================]"
-                                )
                                 session_memory.append(
                                     {
                                         "role": "system",
@@ -713,11 +720,6 @@ async def main():
                                     }
                                 )
                             if "disk_info" in ket_qua_thuc_thi and ket_qua_thuc_thi["disk_info"]:
-                                print(f"{cau_hinh.SUCCESS} Thông tin ổ đĩa:")
-                                for disk in ket_qua_thuc_thi["disk_info"]["disk_info"]:
-                                    print(
-                                        f"  {disk['caption']} ({disk['description']}):\n    Size: {disk['size']} GB\n    Free Space: {disk['free_space']} GB\n    File System: {disk['file_system']}"
-                                    )
                                 session_memory.append(
                                     {
                                         "role": "system",
@@ -734,16 +736,10 @@ async def main():
                                 )
                         else:
                             if "message" in ket_qua_thuc_thi:
-                                print(
-                                    f"[{chat.lay_thoi_gian_hien_tai()}] {cau_hinh.RIN}Rin{cau_hinh.RESET}: {ket_qua_thuc_thi['message']}"
-                                )
                                 session_memory.append(
                                     {"role": "model", "content": ket_qua_thuc_thi["message"]}
                                 )
                             if "gemini_2_validation" in ket_qua_thuc_thi:
-                                print(
-                                    f"[{chat.lay_thoi_gian_hien_tai()}] {cau_hinh.RIN}Rin{cau_hinh.RESET}: {cau_hinh.GREEN}Phân tích: [OK]{cau_hinh.RESET}\n\n[==================================================================================================]\n{cau_hinh.RICH_PINK}[!!]{cau_hinh.RESET} {cau_hinh.THISTLE1}{ket_qua_thuc_thi['gemini_2_validation']}{cau_hinh.RESET}\n[==================================================================================================]\n"
-                                )
                                 session_memory.append(
                                     {
                                         "role": "model",
@@ -751,9 +747,6 @@ async def main():
                                     }
                                 )
                             if "stack_trace" in ket_qua_thuc_thi:
-                                print(
-                                    f"{cau_hinh.RED}Stack trace:{cau_hinh.RESET}\n{ket_qua_thuc_thi['stack_trace']}"
-                                )
                                 session_memory.append(
                                     {
                                         "role": "system",
@@ -771,6 +764,7 @@ async def main():
                         }
                     )
                 finally:
+                    #await stop_thinking_animation_wrapper()  # Sử dụng hàm wrapper
                     pass
                 session_memory.append({"role": "system", "content": "--- Kết thúc xử lý câu lệnh ---"})
                 await stop_thinking_animation_wrapper()
@@ -788,11 +782,14 @@ async def main():
                 prompt_moi = "\n".join(prompt_parts)
 
                 try:
+                    # Tăng timeout lên 120 giây
                     chat_task = asyncio.create_task(chat.chat_session_1.send_message_async(prompt_moi))
                     await asyncio.sleep(0)  # Nhường quyền cho task khác
                     phan_hoi = await asyncio.wait_for(chat_task, timeout=120)
                     if phan_hoi and phan_hoi.text:
                         phan_hoi_da_dinh_dang = chat.dinh_dang_van_ban(phan_hoi.text)
+                        # memory.append({"role": "user", "content": cau_hoi})
+                        # memory.append({"role": "model", "content": phan_hoi_da_dinh_dang})
                         session_memory.append({"role": "user", "content": cau_hoi})
                         session_memory.append({"role": "model", "content": phan_hoi_da_dinh_dang})
 
@@ -803,7 +800,7 @@ async def main():
                         print(
                             f"[{chat.lay_thoi_gian_hien_tai()}] {cau_hinh.RIN}Rin{cau_hinh.RESET}: {cau_hinh.RED}Hmm... Có vẻ tui đang gặp chút vấn đề (Không nhận được phản hồi từ Gemini).{cau_hinh.RESET}"
                         )
-                    await stop_thinking_animation_wrapper() 
+                    await stop_thinking_animation_wrapper()  # Sử dụng hàm wrapper
                 except asyncio.TimeoutError:
                     chat_task.cancel()
                     try:
@@ -813,12 +810,12 @@ async def main():
                             f"[{chat.lay_thoi_gian_hien_tai()}] {cau_hinh.RIN}Rin{cau_hinh.RESET}: {cau_hinh.YELLOW}Đã hủy thao tác của Gemini (timeout).{cau_hinh.RESET}"
                         )
                     finally:
-                        await stop_thinking_animation_wrapper()  
+                        await stop_thinking_animation_wrapper()  # Sử dụng hàm wrapper
                 except Exception as e:
                     print(
                         f"[{chat.lay_thoi_gian_hien_tai()}] {cau_hinh.RIN}Rin{cau_hinh.RESET}: {cau_hinh.RED}Lỗi: {e}{cau_hinh.RESET}"
                     )
-                    await stop_thinking_animation_wrapper()  
+                    await stop_thinking_animation_wrapper()  # Sử dụng hàm wrapper
 
             for file_message in file_messages:
                 if isinstance(file_message, dict) and file_message.get("type") == "error":
