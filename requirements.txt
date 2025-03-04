@@ -1,7 +1,7 @@
 google-generativeai
 psutil
 watchdog
-python-magic
+python-magic-bin
 pygments
 python-docx
 openpyxl
