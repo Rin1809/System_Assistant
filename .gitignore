@@ -3,7 +3,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.env
+
 moitruongao/
 # Logs
 *.log
@@ -13,7 +13,4 @@ moitruongao/
 .DS_Store  # macOS
 Thumbs.db  # Windows
 
-# Nếu bạn có file cấu hình riêng tư (API key, password,...)
-utils/cau_hinh_rieng.py  # Ví dụ
-#Nếu bạn không muốn chia sẻ memory
 memory/
